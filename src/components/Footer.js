@@ -4,7 +4,7 @@ import { Twitter, Linkedin, Github, Code2 } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="w-full py-12 px-6 border-t border-white/10 bg-black/80 backdrop-blur-lg">
+    <footer className="w-full sm:py-18 py-6 px-6 border-t border-white/10 bg-black/80 backdrop-blur-lg">
       <div className="max-w-8xl mx-auto">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-2">

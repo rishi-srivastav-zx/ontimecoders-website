@@ -52,13 +52,11 @@ export default function Portfolio() {
   const [activePreview, setActivePreview] = useState(null);
 
   return (
-    <section id="portfolio" className="py-28 px-6 relative">
+    <section id="portfolio" className="sm:py-28 py-8 px-6 relative">
       <div className="max-w-7xl mx-auto relative">
         {/* Heading */}
         <div className="mb-20">
-          <h2 className="text-5xl font-bold text-white mb-4">
-            Selected Works
-          </h2>
+          <h2 className="text-5xl font-bold text-white mb-4">Selected Works</h2>
           <p className="text-white/40 max-w-xl">
             A curated collection of high-performance digital products crafted
             with precision and premium design aesthetics.
@@ -89,9 +87,11 @@ export default function Portfolio() {
                 />
 
                 {/* Overlay Button */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
                                 opacity-0 group-hover:opacity-100 
-                                transition duration-500 flex items-center justify-center">
+                                transition duration-500 flex items-center justify-center"
+                >
                   <a
                     href={project.url}
                     target="_blank"

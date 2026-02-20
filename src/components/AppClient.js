@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Suspense, memo, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { ScrollControls, Scroll } from '@react-three/drei';
+import { Suspense, memo, useState, useEffect } from "react";
+import { Canvas } from "@react-three/fiber";
+import { ScrollControls, Scroll } from "@react-three/drei";
 
-import Scene from './Scene';
-import Navbar from './Navbar';
-import Hero from './Hero';
-import About from './About';
-import Services from './Services';
-import WhyChooseUs from './WhyChooseUs';
-import Portfolio from './Portfolio';
-import { Process, Testimonials } from './ProcessAndTestimonials';
-import Pricing, { PricingModals } from './Pricing';
-import { Contact } from './contact';
-import { Footer } from './Footer';  
+import Scene from "./Scene";
+import Navbar from "./Navbar";
+import Hero from "./Hero";
+import About from "./About";
+import Services from "./Services";
+import WhyChooseUs from "./WhyChooseUs";
+import Portfolio from "./Portfolio";
+import { Process, Testimonials } from "./ProcessAndTestimonials";
+import Pricing, { PricingModals } from "./Pricing";
+import { Contact } from "./contact";
+import { Footer } from "./Footer";
 
 const ScrollContent = memo(function ScrollContent({ onPlanSelect }) {
   return (
@@ -36,22 +36,39 @@ const ScrollContent = memo(function ScrollContent({ onPlanSelect }) {
 export default function AppClient() {
   const [showIndianModal, setShowIndianModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [pages, setPages] = useState(11); // default desktop
+
+  // ✅ Responsive pages logic
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setPages(19.5); // mobile / tablet
+      } else {
+        setPages(11); // desktop
+      }
+    };
+
+    handleResize(); // run once
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const openIndianModal = () => setShowIndianModal(true);
   const closeIndianModal = () => setShowIndianModal(false);
-  
-  const openContactModal = (planName = '') => {
+
+  const openContactModal = (planName = "") => {
     setSelectedPlan(planName);
     setShowContactModal(true);
   };
+
   const closeContactModal = () => {
     setShowContactModal(false);
-    setSelectedPlan('');
+    setSelectedPlan("");
   };
 
   const handlePlanSelect = (planName) => {
-    if (planName === 'openIndianModal') {
+    if (planName === "openIndianModal") {
       openIndianModal();
       return;
     }
@@ -66,9 +83,9 @@ export default function AppClient() {
       <div className="fixed inset-0 z-0">
         <Canvas shadows={false} gl={{ antialias: true }} dpr={[1, 1.5]}>
           <Suspense fallback={null}>
-            <ScrollControls pages={10.5} damping={0.1}>
+            <ScrollControls pages={pages} damping={0.1}>
               <Scene />
-              <Scroll html style={{ width: '100vw' }}>
+              <Scroll html style={{ width: "100vw" }}>
                 <ScrollContent onPlanSelect={handlePlanSelect} />
               </Scroll>
             </ScrollControls>
@@ -76,7 +93,7 @@ export default function AppClient() {
         </Canvas>
       </div>
 
-      <PricingModals 
+      <PricingModals
         showIndianModal={showIndianModal}
         showContactModal={showContactModal}
         selectedPlan={selectedPlan}

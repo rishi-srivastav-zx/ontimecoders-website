@@ -15,7 +15,7 @@ const steps = [
 
 export function Process() {
   return (
-    <section className="py-32 px-6 overflow-hidden">
+    <section className="sm:py-32 py-4 px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <SectionHeading title="Our Process" subtitle="A systematic approach to building excellence." />
         <div className="relative">

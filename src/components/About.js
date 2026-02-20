@@ -9,7 +9,7 @@ const devs = [
 
 export default function About() {
   return (
-    <section id="about" className="py-32 px-6 relative overflow-hidden">
+    <section id="about" className="sm:py-32 py-4 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
