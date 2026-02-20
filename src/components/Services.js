@@ -14,7 +14,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-32 px-6 bg-white/[0.02]">
+    <section id="services" className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <SectionHeading
           title="Engineered for Performance"

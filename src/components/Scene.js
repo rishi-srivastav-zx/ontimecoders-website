@@ -75,7 +75,6 @@ function Track() {
           scale={obj.scale}
         />
       ))}
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
     </group>
   );
 }
@@ -87,6 +86,7 @@ export default function Scene() {
       <fog attach="fog" args={['#050505', 5, 25]} />
       <ambientLight intensity={0.2} />
       <pointLight position={[0, 0, 0]} intensity={2} color="#0066ff" />
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       <Track />
       <Environment preset="night" />
     </>

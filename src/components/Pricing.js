@@ -2,24 +2,161 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle2, X, Rocket, Zap, Crown, Sparkles, Calendar, ArrowRight } from 'lucide-react';
+import { CheckCircle2, X, Rocket, Zap, Crown, Sparkles, Calendar, ArrowRight, Send, Loader2, Check } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SectionHeading } from './shared';
+
+// ── Contact Form Modal ───────────────────────────────────────────────────────
+function ContactModal({ isOpen, onClose, planName = '', currency = 'USD' }) {
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    setTimeout(() => {
+      onClose();
+      setIsSuccess(false);
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    }, 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-lg bg-gradient-to-b from-slate-900 to-slate-950 border border-white/10 rounded-3xl p-8 shadow-2xl"
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all"
+          >
+            <X size={20} />
+          </button>
+
+          {isSuccess ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12"
+            >
+              <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
+                <Check className="w-10 h-10 text-green-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+              <p className="text-white/60">We'll get back to you within 24 hours.</p>
+            </motion.div>
+          ) : (
+            <>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {planName ? `Get Started with ${planName}` : 'Get in Touch'}
+                </h3>
+                <p className="text-white/50">
+                  {planName 
+                    ? `Fill in your details and we'll reach out about the ${planName} plan.`
+                    : 'Tell us about your project and we\'ll get back to you shortly.'}
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-white/70 text-sm font-medium mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm font-medium mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm font-medium mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all"
+                    placeholder="+91 98765 43210"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm font-medium mb-2">Message</label>
+                  <textarea
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all resize-none"
+                    placeholder="Tell us about your project requirements..."
+                  />
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={isSubmitting}
+                  type="submit"
+                  className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:from-blue-400 hover:to-blue-500 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      Send Message
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 // ── USD plan data ────────────────────────────────────────────────────────────
 const usdPlans = [
   {
-    name: 'Starter', price: '$699', popular: false, cta: 'Get Started',
+    name: 'Starter', price: '$299', popular: false, cta: 'Get Started',
     desc: 'Ideal for businesses launching their first professional presence.',
     features: ['Up to 5 Pages Website','Fully Responsive Design','SEO-Optimized Structure','Speed Optimization','Contact Form Integration','14 Days Post-Launch Support'],
   },
   {
-    name: 'Growth', price: '$1,499', popular: true, cta: 'Book a Strategy Call',
+    name: 'Growth', price: '$899', popular: true, cta: 'Book a Strategy Call',
     desc: 'Built for businesses ready to grow faster and convert better.',
     features: ['Up to 12 Pages','Advanced UI/UX Design','Custom Animations','CMS / Admin Integration','Analytics Setup','30 Days Priority Support'],
   },
   {
-    name: 'Scale', price: '$3,500', popular: false, cta: 'Schedule Consultation',
+    name: 'Scale', price: '$1299', popular: false, cta: 'Schedule Consultation',
     desc: 'Engineered for companies that demand performance and scalability.',
     features: ['Fully Custom Architecture','SaaS / Dashboard Dev','API Integrations','Advanced Performance Eng.','Security Optimization','60 Days Dedicated Support'],
   },
@@ -28,21 +165,21 @@ const usdPlans = [
 // ── Indian plan data ─────────────────────────────────────────────────────────
 const indianPlans = [
   {
-    name: 'Starter', price: '₹19,999', monthlyPrice: '₹3,999/month', highlighted: false,
+    name: 'Starter', price: '₹5000', monthlyPrice: '₹1000/month', highlighted: false,
     description: 'Perfect for small businesses and personal brands starting their digital journey.',
     features: ['5 Pages Website','Premium Template Design','Basic SEO Setup','Contact Form Integration','1 Month Support','Mobile Responsive'],
     icon: <Rocket className="w-6 h-6" />, ctaText: 'Get Started',
   },
   {
-    name: 'Growth', price: '₹39,999', monthlyPrice: '₹6,999/month', highlighted: true,
+    name: 'Growth', price: '₹15000', monthlyPrice: '₹3000/month', highlighted: true,
     description: 'Ideal for growing startups and SMEs ready to scale their online presence.',
     features: ['15 Pages Website','Custom UI/UX Design','Advanced SEO + Schema','WhatsApp & Payment Gateway','Speed Optimization','6 Months Priority Support','Analytics Dashboard','Social Media Integration'],
     icon: <Zap className="w-6 h-6" />, ctaText: 'Start Growing',
   },
   {
-    name: 'Scale', price: '₹79,999+', highlighted: false,
+    name: 'Scale', price: '₹25000+', highlighted: false,
     description: 'Enterprise-grade solutions for established businesses demanding excellence.',
-    features: ['Unlimited Pages','Fully Bespoke Design','Headless CMS Architecture','Cloud Hosting + CDN','Enterprise SEO Suite','12 Months Dedicated Support','Custom Integrations','Performance Monitoring','Dedicated Account Manager'],
+    features: ['2500 pages website','Fully Bespoke Design','Headless CMS Architecture','Cloud Hosting + CDN','Enterprise SEO Suite','12 Months Dedicated Support','Custom Integrations','Performance Monitoring','Dedicated Account Manager'],
     icon: <Crown className="w-6 h-6" />, ctaText: 'Contact Sales',
   },
 ];
@@ -50,11 +187,11 @@ const indianPlans = [
 const trustBadges = ['No hidden charges', 'GST included', '100% Indian owned', 'Money-back guarantee'];
 
 // ── Indian Pricing Card ──────────────────────────────────────────────────────
-function IndianPricingCard({ plan, index }) {
+function IndianPricingCard({ plan, index, onSelect }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}        // animate not whileInView — works inside modal
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.15 }}
       whileHover={{ y: -10 }}
       className={cn(
@@ -105,6 +242,7 @@ function IndianPricingCard({ plan, index }) {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => onSelect(plan.name)}
           className={cn(
             'w-full py-4 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all duration-300',
             plan.highlighted
@@ -120,7 +258,7 @@ function IndianPricingCard({ plan, index }) {
 }
 
 // ── Indian Pricing Modal Content ─────────────────────────────────────────────
-function IndianPricingContent() {
+function IndianPricingContent({ onSelectPlan }) {
   return (
     <section className="relative py-24 lg:py-32 overflow-hidden min-h-screen">
       <div className="absolute inset-0 bg-gradient-to-b from-[#0B1220] via-[#0F1B2E] to-[#0B1220]" />
@@ -139,10 +277,10 @@ function IndianPricingContent() {
         <div className="text-center max-w-3xl mx-auto mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 mb-6"
           >
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-blue-400 text-xs font-bold uppercase tracking-widest">🇮🇳 India Pricing Plans</span>
+            <span className="text-2xl">🇮🇳</span>
+            <span className="text-orange-400 text-xs font-bold uppercase tracking-widest">India Pricing Plans</span>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -150,7 +288,7 @@ function IndianPricingContent() {
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
           >
             Choose the Right Plan for Your{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-green-500">
               Business Growth
             </span>
           </motion.h2>
@@ -166,7 +304,7 @@ function IndianPricingContent() {
         {/* Cards */}
         <div className="grid md:grid-cols-3 gap-8 lg:gap-6 items-start mb-20">
           {indianPlans.map((plan, index) => (
-            <IndianPricingCard key={plan.name} plan={plan} index={index} />
+            <IndianPricingCard key={plan.name} plan={plan} index={index} onSelect={onSelectPlan} />
           ))}
         </div>
 
@@ -187,6 +325,7 @@ function IndianPricingContent() {
             </p>
             <motion.button
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={() => onSelectPlan('Consultation')}
               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 rounded-xl font-semibold hover:bg-blue-50 transition-colors group"
             >
               Schedule Free Consultation
@@ -203,7 +342,7 @@ function IndianPricingContent() {
         >
           {trustBadges.map((badge) => (
             <div key={badge} className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-blue-500" />
+              <CheckCircle2 className="w-4 h-4 text-green-500" />
               <span>{badge}</span>
             </div>
           ))}
@@ -214,10 +353,12 @@ function IndianPricingContent() {
 }
 
 // ── Main Pricing Component ───────────────────────────────────────────────────
-export default function Pricing() {
-  const [showModal, setShowModal] = useState(false);
-  const openModal  = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
+export default function Pricing({ onPlanSelect }) {
+  const openContactModal = (planName) => {
+    if (onPlanSelect) {
+      onPlanSelect(planName);
+    }
+  };
 
   return (
     <>
@@ -230,13 +371,21 @@ export default function Pricing() {
 
           {/* 🇮🇳 Toggle */}
           <div className="flex justify-center mb-12">
-            <motion.button
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              onClick={openModal}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-green-500 text-white rounded-full font-semibold shadow-lg hover:shadow-orange-500/30 transition-all duration-300"
+            <button
+              type="button"
+              onClick={() => {
+                if (onPlanSelect) {
+                  onPlanSelect('openIndianModal');
+                }
+              }}
+              className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 via-white/20 to-green-500 text-white rounded-full font-bold shadow-lg hover:shadow-orange-500/30 transition-all duration-300 border border-white/10"
             >
-              🇮🇳 View Pricing in INR (₹)
-            </motion.button>
+              <span className="text-2xl">🇮🇳</span>
+              <span className="flex flex-col items-start">
+                <span className="text-xs opacity-70 uppercase tracking-wider">View Pricing in</span>
+                <span className="text-lg leading-none">Indian Rupee (₹)</span>
+              </span>
+            </button>
           </div>
 
           {/* USD Cards */}
@@ -271,7 +420,7 @@ export default function Pricing() {
                   ))}
                 </div>
                 <button
-                  onClick={openModal}
+                  onClick={() => openContactModal(plan.name)}
                   className={cn(
                     'w-full py-4 rounded-2xl font-bold transition-all duration-300',
                     plan.popular
@@ -292,7 +441,7 @@ export default function Pricing() {
               Have something unique in mind? We build tailored digital systems designed around your business goals.
             </p>
             <button
-              onClick={openModal}
+              onClick={() => openContactModal('Custom Project')}
               className="px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-blue-500 hover:text-white transition-all duration-300"
             >
               Request a Custom Quote
@@ -300,19 +449,41 @@ export default function Pricing() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      {/* Modal */}
+// ── Pricing Modals (rendered outside Scroll) ────────────────────────────────────
+export function PricingModals({ 
+  showIndianModal, 
+  showContactModal, 
+  selectedPlan,
+  onOpenIndianModal,
+  onCloseIndianModal, 
+  onCloseContactModal,
+  onPlanSelect 
+}) {
+  const handlePlanSelect = (planName) => {
+    onCloseIndianModal();
+    setTimeout(() => {
+      if (onPlanSelect) onPlanSelect(planName);
+    }, 300);
+  };
+
+  return (
+    <>
+      {/* Indian Pricing Modal */}
       <AnimatePresence>
-        {showModal && (
+        {showIndianModal && (
           <motion.div
-            key="backdrop"
+            key="indian-backdrop"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-sm overflow-y-auto"
-            onClick={closeModal}
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm overflow-y-auto"
+            onClick={onCloseIndianModal}
           >
             <motion.div
-              key="panel"
+              key="indian-panel"
               initial={{ opacity: 0, scale: 0.94, y: 28 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 28 }}
@@ -320,19 +491,25 @@ export default function Pricing() {
               onClick={(e) => e.stopPropagation()}
               className="relative min-h-screen"
             >
-              {/* Close button — fixed so always visible while scrolling */}
               <button
-                onClick={closeModal}
+                onClick={onCloseIndianModal}
                 aria-label="Close"
                 className="fixed top-5 right-5 z-[110] w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all duration-200"
               >
                 <X size={22} />
               </button>
-              <IndianPricingContent />
+              <IndianPricingContent onSelectPlan={handlePlanSelect} />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Contact Form Modal */}
+      <ContactModal 
+        isOpen={showContactModal} 
+        onClose={onCloseContactModal} 
+        planName={selectedPlan}
+      />
     </>
   );
 }

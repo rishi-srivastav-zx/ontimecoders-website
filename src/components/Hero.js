@@ -323,72 +323,62 @@ export default function Hero() {
             {startTyping && (
               <TypewriterText 
                 text="Next-Gen Web Development" 
-                delay={200}
+                delay={100}
                 speed={60}
               />
             )}
           </span>
         </motion.div>
 
-        {/* Brand name — CONTINUOUS SCRAMBLE EFFECT */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-6"
-        >
-          <h1
-            className="font-extrabold uppercase tracking-tighter leading-none"
-            style={{
-              fontSize: 'clamp(3rem, 10vw, 7.5rem)',
-              color: '#00f0ff',
-              textShadow: '0 0 40px rgba(0,240,255,0.45), 0 0 80px rgba(0,240,255,0.2)',
-            }}
-          >
-            {titleScramble ? (
-              <ScrambleText 
-                text="OntimeCoders" 
-                speed={40}
-                pauseDuration={3000}
-                className="text-[#00f0ff]"
-              />
-            ) : (
-              <span className="opacity-0">OntimeCoders</span>
-            )}
-          </h1>
-        </motion.div>
+          {/* Brand name — CONTINUOUS SCRAMBLE EFFECT */}
+<motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.8 }}
+  className="mb-6"
+>
+  <h1
+    className="font-extrabold uppercase tracking-tighter leading-none"
+    style={{
+      fontSize: 'clamp(3rem, 10vw, 7.5rem)',
+      color: '#00f0ff',
+      textShadow: '0 0 40px rgba(0,240,255,0.45), 0 0 80px rgba(0,240,255,0.2)',
+    }}
+  >
+    {titleScramble ? (
+      <ScrambleText 
+        text="OntimeCoders" 
+        speed={40}
+        pauseDuration={1500}
+        className="text-[#00f0ff]"
+      />
+    ) : (
+      <span className="opacity-0">OntimeCoders</span>
+    )}
+  </h1>
+</motion.div>
 
-        {/* Tagline with typing effect */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.5 }}
-          className="mb-4 h-[clamp(1.25rem,3vw,2.1rem)]"
-        >
-          <p
-            className="font-bold"
-            style={{
-              fontSize: 'clamp(1.25rem, 3vw, 2.1rem)',
-              background: 'linear-gradient(90deg, #00f0ff, #7b5cff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            {startTyping && (
-              <TypewriterText 
-                text="Launch Faster. Scale Smarter." 
-                delay={2500}
-                speed={70}
-              />
-            )}
-          </p>
-        </motion.div>
+{/* Tagline with typing effect — shows AFTER brand name completes */}
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 1.5, duration: 0.5 }}
+  className="mb-4"
+>
+  <p className="font-bold text-white text-[clamp(1.25rem,3vw,2.1rem)]">
+    <TypewriterText 
+      text="Launch Faster. Scale Smarter." 
+      delay={800}
+      speed={70}
+    />
+  </p>
+</motion.div>
 
         {/* Subtext */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.5, duration: 0.7 }}
+          transition={{ delay: 3.5, duration: 0.5 }}
           className="text-xl md:text-2xl text-white/60 mb-12 max-w-2xl mx-auto leading-relaxed"
         >
           We build scalable, high-performance digital products engineered for growth — on time, every time.
