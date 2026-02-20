@@ -21,7 +21,7 @@ const ScrollContent = memo(function ScrollContent({ onPlanSelect }) {
     <div className="w-screen">
       <Hero />
       <About />
-      <Services />
+      <Services onPlanSelect={onPlanSelect} />
       <WhyChooseUs />
       <Portfolio />
       <Process />
@@ -66,7 +66,7 @@ export default function AppClient() {
       <div className="fixed inset-0 z-0">
         <Canvas shadows={false} gl={{ antialias: true }} dpr={[1, 1.5]}>
           <Suspense fallback={null}>
-            <ScrollControls pages={9.8} damping={0.1}>
+            <ScrollControls pages={10.5} damping={0.1}>
               <Scene />
               <Scroll html style={{ width: '100vw' }}>
                 <ScrollContent onPlanSelect={handlePlanSelect} />

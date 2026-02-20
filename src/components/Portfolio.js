@@ -81,7 +81,7 @@ export default function Portfolio() {
                          hover:border-white/30 transition-all duration-500"
             >
               {/* Image */}
-              <a className="relative rounded-2xl overflow-hidden aspect-[4/3] mb-6" href={`${project.url}`} target="_blank">
+              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] mb-6">
                 <img
                   src={project.img}
                   alt={project.title}
@@ -102,7 +102,7 @@ export default function Portfolio() {
                     Visit Website
                   </a>
                 </div>
-              </a>
+              </div>
 
               {/* Info */}
               <div className="flex justify-between items-start">
