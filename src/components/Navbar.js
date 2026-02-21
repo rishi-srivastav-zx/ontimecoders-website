@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Code2, Menu, X, Play, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-const navItems = ['About', 'Services', 'Portfolio', 'Pricing', 'Contact'];
+const navItems = ['AboutUs', 'Services', 'Portfolio', 'Pricing', 'ContactUs'];
 
 // Video Modal Component
 function VideoModal({ isOpen, onClose }) {
