@@ -187,6 +187,16 @@ export default function Navbar() {
   };
 }, []);
 
+  const handleNavClick = (item) => {
+    const id = item.toLowerCase();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  };
 
   return (
     <>
@@ -209,7 +219,8 @@ export default function Navbar() {
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium text-white/70 hover:text-white transition-colors"
+                onClick={() => handleNavClick(item)}
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors cursor-pointer"
               >
                 {item}
               </a>
@@ -247,8 +258,8 @@ export default function Navbar() {
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="text-lg font-medium text-white/70"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => handleNavClick(item)}
+                  className="text-lg font-medium text-white/70 cursor-pointer"
                 >
                   {item}
                 </a>

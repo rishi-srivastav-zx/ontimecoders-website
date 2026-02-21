@@ -43,9 +43,9 @@ export default function AppClient() {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setPages(19.5); // mobile / tablet
+        setPages(23.2); // mobile / tablet
       } else {
-        setPages(11); // desktop
+        setPages(10.6); // desktop
       }
     };
 

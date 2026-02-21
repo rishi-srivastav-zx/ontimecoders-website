@@ -7,42 +7,42 @@ const projects = [
   {
     title: "College Forum",
     category: "Community Platform",
-    img: "https://picsum.photos/seed/collegeforum/800/600",
+    img: "./images/collegeforum.jpeg",
     url: "https://collegeforum.in",
     tags: ["Next.js", "MongoDB", "Tailwind"],
   },
   {
     title: "Modern Landing",
     category: "UI Showcase",
-    img: "https://picsum.photos/seed/modern/800/600",
+    img: "./images/prokect.jpeg",
     url: "https://silver-nasturtium-dec869.netlify.app/",
     tags: ["React", "Framer Motion"],
   },
   {
     title: "Staze",
     category: "Creative Web",
-    img: "https://picsum.photos/seed/staze/800/600",
+    img: "./images/project3.jpeg",
     url: "https://staze.netlify.app/",
     tags: ["Next.js", "GSAP"],
   },
   {
     title: "Starlit",
     category: "Animated Portfolio",
-    img: "https://picsum.photos/seed/starlit/800/600",
+    img: "./images/project4.jpeg",
     url: "https://starlit-moonbeam-89b2f5.netlify.app/",
     tags: ["Three.js", "Tailwind"],
   },
   {
     title: "Real Estate App",
     category: "Web Application",
-    img: "https://picsum.photos/seed/realestate/800/600",
+    img: "./images/project5.jpeg",
     url: "https://realestate-web-application.netlify.app/",
     tags: ["React", "Firebase"],
   },
   {
     title: "YouTube Clone",
     category: "Video Platform",
-    img: "https://picsum.photos/seed/youtubeclone/800/600",
+    img: "./images/youtube.jpeg",
     url: "https://youtube-clonel.netlify.app/",
     tags: ["React", "API"],
   },
@@ -66,8 +66,11 @@ export default function Portfolio() {
         {/* Grid */}
         <div className="grid md:grid-cols-2 gap-10 relative">
           {projects.map((project, i) => (
-            <motion.div
+            <motion.a
               key={i}
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
@@ -76,7 +79,7 @@ export default function Portfolio() {
               onMouseLeave={() => setActivePreview(null)}
               className="group relative bg-white/[0.03] border border-white/10 
                          rounded-3xl p-5 backdrop-blur-xl 
-                         hover:border-white/30 transition-all duration-500"
+                         hover:border-white/30 transition-all duration-500 block"
             >
               {/* Image */}
               <div className="relative rounded-2xl overflow-hidden aspect-[4/3] mb-6">
@@ -86,21 +89,18 @@ export default function Portfolio() {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
 
-                {/* Overlay Button */}
+              {/* Overlay Button */}
                 <div
                   className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
                                 opacity-0 group-hover:opacity-100 
                                 transition duration-500 flex items-center justify-center"
                 >
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <span
                     className="px-6 py-3 bg-white text-black rounded-full 
-                               font-semibold hover:scale-105 transition"
+                               font-semibold hover:scale-105 transition cursor-pointer"
                   >
                     Visit Website
-                  </a>
+                  </span>
                 </div>
               </div>
 
@@ -153,7 +153,7 @@ export default function Portfolio() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </div>

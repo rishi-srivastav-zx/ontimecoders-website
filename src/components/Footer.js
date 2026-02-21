@@ -1,6 +1,7 @@
 'use client';
 
 import { Twitter, Linkedin, Github, Code2 } from 'lucide-react';
+import Link from 'next/link';
 
 export function Footer() {
   return (
@@ -54,8 +55,8 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5 text-white/20 text-xs uppercase tracking-widest">
           <p>© 2025 OntimeCoders. All rights reserved.</p>
           <div className="flex gap-8 mt-4 md:mt-0">
-            <a href="#" className="hover:text-blue-500 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-blue-500 transition-colors">Terms of Service</a>
+            <Link href="/PrivacyPolicyPage" className="hover:text-blue-500 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-blue-500 transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
