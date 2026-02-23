@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 
 const projects = [
@@ -130,7 +130,7 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Floating Side Preview */}
+              {/* Floating Side Preview
               <AnimatePresence>
                 {activePreview === project.url && (
                   <motion.div
@@ -152,7 +152,7 @@ export default function Portfolio() {
                     />
                   </motion.div>
                 )}
-              </AnimatePresence>
+              </AnimatePresence> */}
             </motion.a>
           ))}
         </div>

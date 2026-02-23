@@ -1,9 +1,8 @@
-"use client";
+'use client';
 
-import { Suspense, memo, useState, useEffect } from "react";
+import { Suspense, memo, useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ScrollControls, Scroll } from "@react-three/drei";
-
+import { motion, AnimatePresence } from "motion/react";
 import Scene from "./Scene";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
@@ -11,15 +10,20 @@ import About from "./About";
 import Services from "./Services";
 import WhyChooseUs from "./WhyChooseUs";
 import Portfolio from "./Portfolio";
-import { Process, Testimonials } from "./ProcessAndTestimonials";
+import { Process } from "./Process";
+import { Testimonials } from "./testimonials"; 
 import Pricing, { PricingModals } from "./Pricing";
 import { Contact } from "./contact";
 import { Footer } from "./Footer";
+import { LoadingScreen } from "./loadingscreen";
+import { ScrollGuardian } from "./scrollguard";
 
-const ScrollContent = memo(function ScrollContent({ onPlanSelect }) {
+const ScrollContent = memo(function ScrollContent({ onPlanSelect, footerRef, mainContentRef }) {
   return (
     <div className="w-screen">
-      <Hero />
+      <div ref={mainContentRef}>
+        <Hero />
+      </div>
       <About />
       <Services onPlanSelect={onPlanSelect} />
       <WhyChooseUs />
@@ -28,31 +32,21 @@ const ScrollContent = memo(function ScrollContent({ onPlanSelect }) {
       <Testimonials />
       <Pricing onPlanSelect={onPlanSelect} />
       <Contact />
-      <Footer />
+      <div ref={footerRef}>
+        <Footer />
+      </div>
     </div>
   );
 });
 
 export default function AppClient() {
+  const [isLoading, setIsLoading] = useState(true); // 👈 controls loading state
   const [showIndianModal, setShowIndianModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [pages, setPages] = useState(11); // default desktop
-
-  // ✅ Responsive pages logic
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setPages(23.2); // mobile / tablet
-      } else {
-        setPages(10.6); // desktop
-      }
-    };
-
-    handleResize(); // run once
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  
+  const footerRef = useRef(null);
+  const mainContentRef = useRef(null);
 
   const openIndianModal = () => setShowIndianModal(true);
   const closeIndianModal = () => setShowIndianModal(false);
@@ -77,31 +71,54 @@ export default function AppClient() {
   };
 
   return (
-    <div className="font-sans bg-[#050505] selection:bg-blue-600/30 selection:text-white">
-      <Navbar />
+    <>
+      {/* ✅ Loading Screen — sits on top, disappears when done */}
+      <LoadingScreen onFinish={() => setIsLoading(false)} />
 
-      <div className="fixed inset-0 z-0">
-        <Canvas shadows={false} gl={{ antialias: true }} dpr={[1, 1.5]}>
-          <Suspense fallback={null}>
-            <ScrollControls pages={pages} damping={0.1}>
-              <Scene />
-              <Scroll html style={{ width: "100vw" }}>
-                <ScrollContent onPlanSelect={handlePlanSelect} />
-              </Scroll>
-            </ScrollControls>
-          </Suspense>
-        </Canvas>
-      </div>
+      {/* ✅ Main App — fades in after loading */}
+      <AnimatePresence>
+        {!isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="font-sans bg-[#050505] selection:bg-blue-600/30 selection:text-white"
+          >
+            <Navbar />
+            
+            {/* 3D Background */}
+            <div className="fixed inset-0 z-0 pointer-events-none">
+              <Canvas shadows={false} gl={{ antialias: true }} dpr={[1, 1.5]}>
+                <Suspense fallback={null}>
+                   <Scene />
+                </Suspense>
+              </Canvas>
+            </div>
 
-      <PricingModals
-        showIndianModal={showIndianModal}
-        showContactModal={showContactModal}
-        selectedPlan={selectedPlan}
-        onOpenIndianModal={openIndianModal}
-        onCloseIndianModal={closeIndianModal}
-        onCloseContactModal={closeContactModal}
-        onPlanSelect={handlePlanSelect}
-      />
-    </div>
+            {/* Scrollable Content */}
+            <div className="relative z-10 w-full">
+               <ScrollContent 
+                 onPlanSelect={handlePlanSelect} 
+                 footerRef={footerRef}
+                 mainContentRef={mainContentRef}
+               />
+            </div>
+
+            {/* Scroll Guard - Detects if user scrolls beyond footer */}
+            <ScrollGuardian footerRef={footerRef} mainContentRef={mainContentRef} />
+
+            <PricingModals
+              showIndianModal={showIndianModal}
+              showContactModal={showContactModal}
+              selectedPlan={selectedPlan}
+              onOpenIndianModal={openIndianModal}
+              onCloseIndianModal={closeIndianModal}
+              onCloseContactModal={closeContactModal}
+              onPlanSelect={handlePlanSelect}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

@@ -156,9 +156,9 @@ export default function PrivacyPolicy() {
               <div className="absolute inset-0 bg-cyan-500 blur-lg opacity-50" />
               <Clock className="w-8 h-8 text-cyan-400 relative z-10" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <a href="/" className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
               OntimeCoders
-            </span>
+            </a>
           </motion.div>
           
           <motion.div 

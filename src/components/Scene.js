@@ -1,8 +1,6 @@
-'use client';
-
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { PerspectiveCamera, Environment, useScroll, Stars } from '@react-three/drei';
+import { PerspectiveCamera, Environment, Stars } from '@react-three/drei';
 import * as THREE from 'three';
 
 function TrackObject({ position, color, speed = 1, scale = 1 }) {
@@ -25,8 +23,21 @@ function TrackObject({ position, color, speed = 1, scale = 1 }) {
 }
 
 function Track() {
-  const scroll = useScroll();
   const groupRef = useRef(null);
+  const scrollOffset = useRef(0);
+  const lerpedOffset = useRef(0);
+
+  // Sync with window scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) return;
+      scrollOffset.current = window.scrollY / maxScroll;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const objects = useMemo(() => {
     const items = [];
@@ -49,8 +60,17 @@ function Track() {
 
   useFrame((state) => {
     if (!groupRef.current) return;
-    const offset = scroll.offset;
+    
+    // Smooth damping for the scroll transition
+    lerpedOffset.current = THREE.MathUtils.lerp(
+      lerpedOffset.current,
+      scrollOffset.current,
+      0.1
+    );
+
+    const offset = lerpedOffset.current;
     groupRef.current.position.z = offset * 400;
+    
     state.camera.position.x = THREE.MathUtils.lerp(
       state.camera.position.x,
       Math.sin(state.clock.getElapsedTime() * 0.5) * 0.5,

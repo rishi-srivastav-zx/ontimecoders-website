@@ -5,7 +5,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Code2, Menu, X, Play, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-const navItems = ['AboutUs', 'Services', 'Portfolio', 'Pricing', 'ContactUs'];
+const navItems = [
+  { label: 'About Us', id: 'about' },
+  { label: 'Services', id: 'services' },
+  { label: 'Portfolio', id: 'portfolio' },
+  { label: 'Pricing', id: 'pricing' },
+  { label: 'Contact Us', id: 'contact' },
+];
 
 // Video Modal Component
 function VideoModal({ isOpen, onClose }) {
@@ -172,26 +178,35 @@ export default function Navbar() {
   }, []);
 
   // Close modal on escape key
- useEffect(() => {
-  const handleEscape = (e) => {
-    if (e.key === 'Escape') {
-      setIsVideoModalOpen(false);
-      setIsMobileMenuOpen(false);
-    }
-  };
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setIsVideoModalOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
 
-  window.addEventListener('keydown', handleEscape);
+    window.addEventListener('keydown', handleEscape);
 
-  return () => {
-    window.removeEventListener('keydown', handleEscape);
-  };
-}, []);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
-  const handleNavClick = (item) => {
-    const id = item.toLowerCase();
+  const handleNavClick = (e, id) => {
+    e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const offset = 80; // Offset for fixed navbar
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -217,12 +232,12 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                onClick={() => handleNavClick(item)}
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={(e) => handleNavClick(e, item.id)}
                 className="text-sm font-medium text-white/70 hover:text-white transition-colors cursor-pointer"
               >
-                {item}
+                {item.label}
               </a>
             ))}
             
@@ -256,12 +271,12 @@ export default function Navbar() {
             >
               {navItems.map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => handleNavClick(item)}
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={(e) => handleNavClick(e, item.id)}
                   className="text-lg font-medium text-white/70 cursor-pointer"
                 >
-                  {item}
+                  {item.label}
                 </a>
               ))}
               <button 
