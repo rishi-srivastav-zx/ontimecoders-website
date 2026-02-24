@@ -20,7 +20,7 @@ import { ScrollGuardian } from "./scrollguard";
 
 const ScrollContent = memo(function ScrollContent({ onPlanSelect, footerRef, mainContentRef }) {
   return (
-    <div className="w-screen">
+    <div className="w-full relative overflow-x-hidden">
       <div ref={mainContentRef}>
         <Hero />
       </div>

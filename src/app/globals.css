@@ -14,11 +14,15 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
   body {
     @apply bg-brand-dark text-white selection:bg-brand-blue/30;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 }
 
