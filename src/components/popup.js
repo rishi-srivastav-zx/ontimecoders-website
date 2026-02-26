@@ -8,6 +8,7 @@ export default function LandingPagePopup() {
   const [showTerms, setShowTerms] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,19 +23,39 @@ export default function LandingPagePopup() {
     if (!email) return;
     
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    setIsSubmitted(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      setIsSubmitted(true);
+    } catch (err) {
+      setError('Failed to submit. Please try again.');
+      console.error('Submission error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const closePopup = () => {
     setIsVisible(false);
-    // Reset after animation
     setTimeout(() => {
       setIsSubmitted(false);
       setEmail('');
       setShowTerms(false);
+      setError('');
     }, 300);
   };
 
@@ -42,20 +63,15 @@ export default function LandingPagePopup() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={closePopup}
       />
 
-      {/* Popup Container */}
       <div className="relative w-full max-w-md transform transition-all animate-slideUp">
-        {/* Decorative Elements */}
         <div className="absolute -top-2 -left-2 w-full h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-75 animate-pulse" />
         
-        {/* Main Card */}
         <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header Gradient */}
           <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4 backdrop-blur-sm">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,10 +86,18 @@ export default function LandingPagePopup() {
             </p>
           </div>
 
-          {/* Content */}
           <div className="p-6">
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    {error}
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Enter your email to claim your free landing page
@@ -85,7 +109,8 @@ export default function LandingPagePopup() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       required
-                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none text-gray-800 placeholder-gray-400"
+                      disabled={isLoading}
+                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all outline-none text-gray-800 placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     />
                     <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -93,7 +118,6 @@ export default function LandingPagePopup() {
                   </div>
                 </div>
 
-                {/* Terms Toggle */}
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   <button
                     type="button"
@@ -116,7 +140,6 @@ export default function LandingPagePopup() {
                     </svg>
                   </button>
                   
-                  {/* Terms Content */}
                   <div className={`overflow-hidden transition-all duration-300 ${showTerms ? 'max-h-40 mt-3 opacity-100' : 'max-h-0 opacity-0'}`}>
                     <div className="text-xs text-gray-600 bg-white p-3 rounded border border-gray-200 leading-relaxed">
                       <strong className="text-purple-700">Special Offer Terms:</strong><br/>
@@ -138,7 +161,7 @@ export default function LandingPagePopup() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Processing...
+                      Sending...
                     </>
                   ) : (
                     <>
@@ -151,7 +174,6 @@ export default function LandingPagePopup() {
                 </button>
               </form>
             ) : (
-              /* Success State */
               <div className="text-center py-8 animate-fadeIn">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4 animate-bounce">
                   <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,12 +183,15 @@ export default function LandingPagePopup() {
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">
                   Thank You! 🎉
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  You've successfully registered! Our team will connect with you shortly to provide your free landing page.
+                <p className="text-gray-600 mb-4">
+                  You've successfully registered! Our team will connect with you shortly.
                 </p>
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
                   <p className="text-sm text-purple-800 font-medium">
-                    📧 Check your inbox at <span className="font-bold">{email}</span> for confirmation
+                    📧 Check your inbox at <span className="font-bold">{email}</span>
+                  </p>
+                  <p className="text-xs text-purple-600 mt-1">
+                    (Thank you email sent successfully!)
                   </p>
                 </div>
                 <button
@@ -179,7 +204,6 @@ export default function LandingPagePopup() {
             )}
           </div>
 
-          {/* Close Button */}
           {!isSubmitted && (
             <button
               onClick={closePopup}
@@ -191,18 +215,16 @@ export default function LandingPagePopup() {
             </button>
           )}
 
-          {/* Footer */}
           {!isSubmitted && (
             <div className="bg-gray-50 px-6 py-3 border-t border-gray-100">
               <p className="text-xs text-center text-gray-500">
-                Trusted by 500+ businesses worldwide • Secure SSL Encryption
+                Trusted by 500+ businesses • Instant email confirmation
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Custom Styles for Animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }
