@@ -63,7 +63,7 @@ export async function POST(request) {
     // Send lead notification to you (admin)
     await resend.emails.send({
       from: 'OnTimeCoders Leads <leads@resend.dev>',
-      to: process.env.ADMIN_EMAIL, 
+      to: process.env.EMAIL_USER, 
       subject: `🎯 New Lead: ${email} - Free Landing Page Request`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
