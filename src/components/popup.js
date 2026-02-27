@@ -42,7 +42,7 @@ export default function LandingPagePopup() {
 
       setIsSubmitted(true);
     } catch (err) {
-      setError('Failed to submit. Please try again.');
+      setError(err.message || 'Failed to submit. Please try again.');
       console.error('Submission error:', err);
     } finally {
       setIsLoading(false);

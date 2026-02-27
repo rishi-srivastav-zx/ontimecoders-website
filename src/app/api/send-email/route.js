@@ -1,6 +1,15 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export async function POST(request) {
   try {
@@ -10,9 +19,17 @@ export async function POST(request) {
       return Response.json({ error: 'Email is required' }, { status: 400 });
     }
 
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error('SMTP configuration is missing');
+      return Response.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
+    const fromEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER;
+    const fromName = process.env.SMTP_FROM_NAME || 'OnTimeCoders';
+
     // Send thank you email to user
-    await resend.emails.send({
-      from: 'OnTimeCoders <onboarding@resend.dev>', 
+    await transporter.sendMail({
+      from: `"${fromName}" <${fromEmail}>`,
       to: email,
       subject: 'Welcome to OnTimeCoders - Your Free Landing Page Awaits!',
       html: `
@@ -44,7 +61,7 @@ export async function POST(request) {
             </p>
             
             <div style="text-align: center; margin-top: 30px;">
-              <a href="https://ontimecoders.netlify.app/contact" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
+              <a href="https://ontimecoders.vercel.app/contact" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">
                 Contact Support
               </a>
             </div>
@@ -53,17 +70,17 @@ export async function POST(request) {
             
             <p style="color: #999; font-size: 12px; text-align: center;">
               OnTimeCoders Team<br>
-              <a href="https://ontimecoders.netlify.app" style="color: #764ba2;">www.ontimecoders.netlify.app</a>
+              <a href="https://ontimecoders.vercel.app" style="color: #764ba2;">www.ontimecoders.vercel.app</a>
             </p>
           </div>
         </div>
       `,
     });
 
-    // Send lead notification to you (admin)
-    await resend.emails.send({
-      from: 'OnTimeCoders Leads <leads@resend.dev>',
-      to: process.env.EMAIL_USER, 
+    // Send lead notification to admin
+    await transporter.sendMail({
+      from: `"${fromName} Leads" <${fromEmail}>`,
+      to: process.env.EMAIL_USER || process.env.SMTP_USER,
       subject: `🎯 New Lead: ${email} - Free Landing Page Request`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -100,6 +117,6 @@ export async function POST(request) {
     return Response.json({ success: true, message: 'Emails sent successfully' });
   } catch (error) {
     console.error('Email error:', error);
-    return Response.json({ error: 'Failed to send emails' }, { status: 500 });
+    return Response.json({ error: error.message || 'Failed to send emails' }, { status: 500 });
   }
 }
